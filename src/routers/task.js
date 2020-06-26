@@ -1,20 +1,10 @@
 const express = require('express')
-require('./db/mongoose')
-const User = require('./models/user')
-const Task = require('./models/task')
-const userRouter = require('./routers/user')
-const taskRouter = require('./routers/task')
-
-const app = express()
-const port = process.env.PORT || 3000
-
-app.use(express.json())
-app.use(userRouter)
+const Task = ('../models/task')
+const router = new express.Router()
 
 
 
-
-app.post('/tasks', async (req, res) => {
+router.post('/tasks', async (req, res) => {
     const task = new Task(req.body)
 
     try {
@@ -25,7 +15,7 @@ app.post('/tasks', async (req, res) => {
     }
 })
 
-app.get('/tasks', async (req, res) => {
+router.get('/tasks', async (req, res) => {
 
     try {
         const tasks = await Task.find({})
@@ -36,7 +26,7 @@ app.get('/tasks', async (req, res) => {
     
 })
 
-app.get('/tasks/:id', async (req, res) => {
+router.get('/tasks/:id', async (req, res) => {
     const _id = req.params.id
 
     try {
@@ -52,7 +42,7 @@ app.get('/tasks/:id', async (req, res) => {
 })
 
 
-app.patch('/tasks/:id', async (req,res) => {
+router.patch('/tasks/:id', async (req,res) => {
     const updates = Object.keys(req.body)
     const allowedUpdates = ['description', 'completed']
     const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
@@ -74,7 +64,7 @@ app.patch('/tasks/:id', async (req,res) => {
     }
 })
 
-app.delete('/tasks/:id', async (req, res) => {
+router.delete('/tasks/:id', async (req, res) => {
     try {
         const task = await Task.findByIdAndDelete(req.params.id)
 
@@ -89,8 +79,4 @@ app.delete('/tasks/:id', async (req, res) => {
 })
 
 
-app.listen(port, () => {
-    console.log('Server is up on port ' + port)
-})
-
-
+module.exports = router
